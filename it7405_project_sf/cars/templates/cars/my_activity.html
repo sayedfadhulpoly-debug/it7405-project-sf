@@ -1,0 +1,192 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container activity-wrapper py-5">
+    <h2 class="mb-2 text-center">My activity</h2>
+    <p class="text-muted text-center mb-4">
+        Here you can see all your purchase requests, offers, test-drive appointments,
+        and reviews linked to your account.
+    </p>
+
+    <div class="row g-4">
+
+        <!-- PURCHASE REQUESTS -->
+        <div class="col-lg-6">
+            <div class="activity-card">
+                <h5 class="mb-2">Purchase requests</h5>
+
+                {% if orders %}
+                <div class="table-responsive">
+                    <table class="table table-sm table-borderless align-middle mb-0">
+                        <thead>
+                            <tr class="small text-muted">
+                                <th>Car</th>
+                                <th>Date</th>
+                                <th>Status</th>
+                                <th class="text-end">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for order in orders %}
+                            <tr>
+                                <td>{{ order.car.make }} {{ order.car.model }} ({{ order.car.year }})</td>
+                                <td>{{ order.created_at|date:"M d, Y H:i" }}</td>
+                                <td>
+                                    <span class="badge bg-primary text-uppercase">{{ order.status }}</span>
+                                </td>
+                                <td class="text-end">
+                                    <form method="post" action="{% url 'delete_order' order.pk %}">
+                                        {% csrf_token %}
+                                        <button class="btn btn-sm btn-outline-danger">Cancel</button>
+                                    </form>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+
+                {% else %}
+                <p class="small bright-text mb-0">You haven’t requested to buy any cars yet.</p>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- PRICE OFFERS -->
+        <div class="col-lg-6">
+            <div class="activity-card">
+                <h5 class="mb-2">Price offers</h5>
+
+                {% if offers %}
+                <div class="table-responsive">
+                    <table class="table table-sm table-borderless align-middle mb-0">
+                        <thead>
+                            <tr class="small text-muted">
+                                <th>Car</th>
+                                <th>Price</th>
+                                <th>Status</th>
+                                <th class="text-end">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for offer in offers %}
+                            <tr>
+                                <td>{{ offer.car.make }} {{ offer.car.model }} ({{ offer.car.year }})</td>
+                                <td>${{ offer.amount }}</td>
+                                <td>
+                                    <span class="badge bg-info text-uppercase">{{ offer.status }}</span>
+                                </td>
+                                <td class="text-end">
+                                    <form method="post" action="{% url 'delete_offer' offer.pk %}">
+                                        {% csrf_token %}
+                                        <button class="btn btn-sm btn-outline-danger">Delete</button>
+                                    </form>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+
+                {% else %}
+                <p class="small bright-text mb-0">You haven’t made any offers yet.</p>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- TEST-DRIVE APPOINTMENTS -->
+        <div class="col-lg-6">
+            <div class="activity-card">
+                <h5 class="mb-2">Test-drive appointments</h5>
+
+                {% if appointments %}
+                <div class="table-responsive">
+                    <table class="table table-sm table-borderless align-middle mb-0">
+                        <thead>
+                            <tr class="small text-muted">
+                                <th>Car</th>
+                                <th>Date</th>
+                                <th>Time</th>
+                                <th class="text-end">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for app in appointments %}
+                            <tr>
+                                <td>{{ app.car_interest|default:"—" }}</td>
+                                <td>{{ app.preferred_date|date:"M d, Y" }}</td>
+                                <td>{{ app.preferred_time }}</td>
+                                <td class="text-end">
+                                    <form method="post" action="{% url 'delete_appointment' app.pk %}">
+                                        {% csrf_token %}
+                                        <button class="btn btn-sm btn-outline-danger">Cancel</button>
+                                    </form>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+
+                {% else %}
+                <p class="small bright-text mb-0">You haven’t requested any test-drive appointments yet.</p>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- REVIEWS -->
+        <div class="col-lg-6">
+            <div class="activity-card">
+                <h5 class="mb-2">Your reviews</h5>
+
+                {% if reviews %}
+                <ul class="list-unstyled mb-0">
+                    {% for review in reviews %}
+                    <li class="mb-3">
+                        <div class="d-flex justify-content-between">
+
+                            <!-- Left side: stars + comment -->
+                            <div class="me-3">
+                                <div class="small text-warning">
+                                    {% for i in "12345" %}
+                                    {% if forloop.counter <= review.rating %} ★ {% else %} ☆ {% endif %} {% endfor %}
+                                        </div>
+                                        <div class="small">
+                                            {{ review.comment|truncatechars:140 }}
+                                        </div>
+                                </div>
+
+                                <!-- Right side: date + buttons -->
+                                <div class="text-end">
+                                    <div class="small bright-text mb-1">
+                                        {{ review.created_at|date:"M d, Y" }}
+                                    </div>
+
+                                    <a href="{% url 'edit_review' review.pk %}"
+                                        class="btn btn-sm btn-outline-light mb-1">
+                                        Edit
+                                    </a>
+
+                                    <form method="post" action="{% url 'delete_review' review.pk %}" class="d-inline">
+                                        {% csrf_token %}
+                                        <button class="btn btn-sm btn-outline-danger">
+                                            Delete
+                                        </button>
+                                    </form>
+                                </div>
+
+                            </div>
+                    </li>
+                    {% endfor %}
+                </ul>
+
+                {% else %}
+                <p class="small bright-text mb-0">You haven’t written any reviews yet.</p>
+                {% endif %}
+            </div>
+        </div>
+
+
+    </div>
+</div>
+{% endblock %}

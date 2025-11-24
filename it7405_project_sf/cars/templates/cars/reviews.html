@@ -1,0 +1,257 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container reviews-wrapper">
+    <div class="reviews-card">
+        <div class="row g-4">
+            <!-- LEFT: form -->
+            <div class="col-md-5">
+                <h2 class="mb-2">Share your experience</h2>
+                <p class="reviews-description mb-3">
+                    Tell us what you think about our website, support, and overall service quality.
+                </p>
+
+                <form method="post" novalidate>
+                    {% csrf_token %}
+
+                    <!-- Full name -->
+                    <div class="mb-3">
+                        <label class="form-label">Full name</label>
+                        {{ form.full_name }}
+                        {% if form.full_name.errors %}
+                            <div class="text-danger small">{{ form.full_name.errors|striptags }}</div>
+                        {% endif %}
+                    </div>
+
+                    <!-- Email -->
+                    <div class="mb-3">
+                        <label class="form-label">Email</label>
+                        {{ form.email }}
+                        {% if form.email.errors %}
+                            <div class="text-danger small">{{ form.email.errors|striptags }}</div>
+                        {% endif %}
+                    </div>
+
+                    <!-- Rating (custom stars) -->
+                    <div class="mb-3">
+                        <label class="form-label d-block">Rating</label>
+
+                        <!-- This is the actual Django field (hidden via CSS) -->
+                        <div class="hidden-rating">
+                            {{ form.rating }}
+                        </div>
+
+                        <!-- Our clickable stars -->
+                        <div class="rating-stars" id="rating-stars">
+                            <span class="rating-star" data-value="1">★</span>
+                            <span class="rating-star" data-value="2">★</span>
+                            <span class="rating-star" data-value="3">★</span>
+                            <span class="rating-star" data-value="4">★</span>
+                            <span class="rating-star" data-value="5">★</span>
+                        </div>
+
+                        <small class="text-muted">Click to rate from 1 (poor) to 5 (excellent).</small>
+
+                        {% if form.rating.errors %}
+                            <div class="text-danger small">{{ form.rating.errors|striptags }}</div>
+                        {% endif %}
+                    </div>
+
+                    <!-- Comment -->
+                    <div class="mb-3">
+                        <label class="form-label">Comment</label>
+                        {{ form.comment }}
+                        {% if form.comment.errors %}
+                            <div class="text-danger small">{{ form.comment.errors|striptags }}</div>
+                        {% endif %}
+                    </div>
+
+                    <button type="submit" class="btn btn-primary w-100 mt-2">
+                        Submit review
+                    </button>
+                </form>
+            </div>
+
+            <!-- RIGHT: compact list of latest 4 reviews -->
+            <div class="col-md-7">
+                <h3 class="mb-3">Customer reviews</h3>
+
+                {% if reviews %}
+                    <div class="d-flex flex-column gap-3">
+                        {% for review in reviews %}
+                            <div class="review-list-item">
+                                <div class="d-flex justify-content-between align-items-center mb-1">
+                                    <span class="review-author">{{ review.full_name }}</span>
+                                    <span class="text-warning small">
+                                        {% for i in "12345" %}
+                                            {% if forloop.counter <= review.rating %}
+                                                ★
+                                            {% else %}
+                                                ☆
+                                            {% endif %}
+                                        {% endfor %}
+                                    </span>
+                                </div>
+                                <p class="mb-1 small">{{ review.comment|truncatechars:120 }}</p>
+                                <div class="review-date">
+                                    {{ review.created_at|date:"M d, Y H:i" }}
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    <p class="text-muted">No reviews yet. Be the first to write one!</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <!-- FULL-WIDTH REVIEW LIST (detailed, with filter/sort/pagination) -->
+    {% if page_obj.object_list %}
+        <div class="mt-4">
+            <h3 class="mb-3 text-center">All customer reviews</h3>
+
+            <!-- Filter + sort controls -->
+            <form method="get" class="row g-2 mb-3 justify-content-center">
+                <div class="col-md-3">
+                    <select name="rating" class="form-select">
+                        <option value="all" {% if current_rating_filter == 'all' %}selected{% endif %}>All ratings</option>
+                        <option value="5" {% if current_rating_filter == '5' %}selected{% endif %}>5 stars only</option>
+                        <option value="4plus" {% if current_rating_filter == '4plus' %}selected{% endif %}>4 stars & up</option>
+                        <option value="3plus" {% if current_rating_filter == '3plus' %}selected{% endif %}>3 stars & up</option>
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <select name="sort" class="form-select">
+                        <option value="newest" {% if current_sort == 'newest' %}selected{% endif %}>Newest first</option>
+                        <option value="oldest" {% if current_sort == 'oldest' %}selected{% endif %}>Oldest first</option>
+                        <option value="rating_high" {% if current_sort == 'rating_high' %}selected{% endif %}>Highest rating</option>
+                        <option value="rating_low" {% if current_sort == 'rating_low' %}selected{% endif %}>Lowest rating</option>
+                    </select>
+                </div>
+                <div class="col-md-2 d-grid">
+                    <button class="btn btn-outline-primary">Apply</button>
+                </div>
+            </form>
+
+            <div class="row g-3">
+                {% for review in page_obj %}
+                    <div class="col-md-6">
+                        <div class="review-list-item">
+                            <div class="d-flex justify-content-between align-items-center mb-1">
+                                <span class="review-author">{{ review.full_name }}</span>
+                                <span class="text-warning small">
+                                    {% for i in "12345" %}
+                                        {% if forloop.counter <= review.rating %}
+                                            ★
+                                        {% else %}
+                                            ☆
+                                        {% endif %}
+                                    {% endfor %}
+                                </span>
+                            </div>
+                            <div class="review-date mb-1">
+                                {{ review.created_at|date:"M d, Y H:i" }}
+                            </div>
+                            <p class="mb-1 small">{{ review.comment }}</p>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+
+            <!-- Pagination controls -->
+            <nav class="mt-3">
+                <ul class="pagination justify-content-center">
+                    {% if page_obj.has_previous %}
+                        <li class="page-item">
+                            <a class="page-link"
+                               href="?page={{ page_obj.previous_page_number }}&sort={{ current_sort }}&rating={{ current_rating_filter }}">
+                                Previous
+                            </a>
+                        </li>
+                    {% else %}
+                        <li class="page-item disabled">
+                            <span class="page-link">Previous</span>
+                        </li>
+                    {% endif %}
+
+                    {% for num in page_obj.paginator.page_range %}
+                        {% if num == page_obj.number %}
+                            <li class="page-item active">
+                                <span class="page-link">{{ num }}</span>
+                            </li>
+                        {% else %}
+                            <li class="page-item">
+                                <a class="page-link"
+                                   href="?page={{ num }}&sort={{ current_sort }}&rating={{ current_rating_filter }}">
+                                    {{ num }}
+                                </a>
+                            </li>
+                        {% endif %}
+                    {% endfor %}
+
+                    {% if page_obj.has_next %}
+                        <li class="page-item">
+                            <a class="page-link"
+                               href="?page={{ page_obj.next_page_number }}&sort={{ current_sort }}&rating={{ current_rating_filter }}">
+                                Next
+                            </a>
+                        </li>
+                    {% else %}
+                        <li class="page-item disabled">
+                            <span class="page-link">Next</span>
+                        </li>
+                    {% endif %}
+                </ul>
+            </nav>
+        </div>
+    {% endif %}
+</div>
+
+<!-- Star rating JS -->
+<script>
+    (function() {
+        const stars = document.querySelectorAll('#rating-stars .rating-star');
+        const input = document.getElementById('id_rating');  // Django gives the rating field this id by default
+
+        if (!input) {
+            console.error("Rating input not found");
+            return;
+        }
+
+        let currentRating = parseInt(input.value || "0");
+
+        function updateStars(rating) {
+            stars.forEach(star => {
+                const value = parseInt(star.getAttribute('data-value'));
+                star.classList.toggle('active', value <= rating);
+                star.classList.remove('hovered');
+            });
+        }
+
+        stars.forEach(star => {
+            const value = parseInt(star.getAttribute('data-value'));
+
+            star.addEventListener('click', function() {
+                currentRating = value;
+                input.value = value;
+                updateStars(currentRating);
+            });
+
+            star.addEventListener('mouseenter', function() {
+                stars.forEach(s => {
+                    const v = parseInt(s.getAttribute('data-value'));
+                    s.classList.toggle('hovered', v <= value);
+                });
+            });
+
+            star.addEventListener('mouseleave', function() {
+                updateStars(currentRating);
+            });
+        });
+
+        // initialize on load
+        updateStars(currentRating || 0);
+    })();
+</script>
+{% endblock %}

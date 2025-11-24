@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+
+{% block content %}
+<section class="page-section">
+  <div class="page-card-lg page-card-transaction">
+
+
+    <!-- Car mini header -->
+    <div class="car-mini-header mb-3">
+      {% if car.image_url %}
+      <img src="{{ car.image_url }}" alt="{{ car.make }} {{ car.model }}">
+      {% endif %}
+      <div>
+        <div class="car-mini-title">
+          {{ car.make }} {{ car.model }} ({{ car.year }})
+        </div>
+        <div class="car-mini-meta">
+          Current price: ${{ car.price }} • You can suggest your own price below.
+        </div>
+      </div>
+    </div>
+
+    <div class="page-card-header">
+      <h2 class="page-card-title mb-1">Make an offer</h2>
+      <p class="page-card-subtitle">
+        Suggest a price you’re comfortable with and add any notes. We’ll respond with an acceptance or a counter offer.
+      </p>
+    </div>
+
+    <form method="post" novalidate>
+      {% csrf_token %}
+      {% for field in form %}
+      <div class="mb-3">
+        <label class="form-label" for="{{ field.id_for_label }}">{{ field.label }}</label>
+        {{ field }}
+        {% if field.errors %}
+        <div class="text-danger small">
+          {{ field.errors|striptags }}
+        </div>
+        {% endif %}
+      </div>
+      {% endfor %}
+
+      <div class="d-flex justify-content-between align-items-center mt-3">
+        <a href="{% url 'car_detail' car.pk %}" class="btn btn-outline-soft">
+          Back to car details
+        </a>
+        <button type="submit" class="btn btn-primary-gradient">
+          Submit offer
+        </button>
+      </div>
+    </form>
+  </div>
+</section>
+{% endblock %}

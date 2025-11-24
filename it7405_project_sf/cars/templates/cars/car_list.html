@@ -1,0 +1,133 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container car-list-container">
+    <h2 class="mb-4 text-center">Available Cars</h2>
+
+    <!-- FILTER BAR -->
+    <form method="get" class="car-filter-form row g-3 align-items-end mb-4">
+
+        <!-- Search by make/model -->
+        <div class="col-md-4">
+            <label class="form-label text-light">Search</label>
+            <input
+                type="text"
+                name="search"
+                class="form-control"
+                placeholder="Search by make or model..."
+                value="{{ request.GET.search|default_if_none:'' }}"
+            >
+        </div>
+
+        <!-- Min price -->
+        <div class="col-md-2">
+            <label class="form-label text-light">Min price ($)</label>
+            <input
+                type="number"
+                name="min_price"
+                class="form-control"
+                placeholder="0"
+                value="{{ request.GET.min_price|default_if_none:'' }}"
+            >
+        </div>
+
+        <!-- Max price -->
+        <div class="col-md-2">
+            <label class="form-label text-light">Max price ($)</label>
+            <input
+                type="number"
+                name="max_price"
+                class="form-control"
+                placeholder="50000"
+                value="{{ request.GET.max_price|default_if_none:'' }}"
+            >
+        </div>
+
+        <!-- Sorting -->
+        <div class="col-md-3">
+            <label class="form-label text-light">Sort by</label>
+            <select name="sort" class="form-select">
+                <!-- default option -->
+                <option value=""
+                    {% if not request.GET.sort %}
+                        selected
+                    {% endif %}
+                >
+                    -- Default --
+                </option>
+
+                <option value="price_asc"
+                    {% if request.GET.sort == 'price_asc' %}
+                        selected
+                    {% endif %}
+                >
+                    Price: Low → High
+                </option>
+
+                <option value="price_desc"
+                    {% if request.GET.sort == 'price_desc' %}
+                        selected
+                    {% endif %}
+                >
+                    Price: High → Low
+                </option>
+
+                <option value="year_new"
+                    {% if request.GET.sort == 'year_new' %}
+                        selected
+                    {% endif %}
+                >
+                    Newest Year
+                </option>
+
+                <option value="year_old"
+                    {% if request.GET.sort == 'year_old' %}
+                        selected
+                    {% endif %}
+                >
+                    Oldest Year
+                </option>
+            </select>
+        </div>
+
+        <!-- Filter button -->
+        <div class="col-md-1 text-end">
+            <button class="btn btn-primary-gradient w-100" type="submit">
+                Go
+            </button>
+        </div>
+
+    </form>
+    <!-- END FILTER BAR -->
+
+    {% if cars %}
+        <div class="row">
+            {% for car in cars %}
+                <div class="col-md-4 mb-4">
+                    <a href="{% url 'car_detail' car.mongo_id %}" class="text-decoration-none text-dark">
+                        <div class="card car-card h-100 shadow-sm">
+                            <img src="{{ car.image_url }}" class="card-img-top" alt="{{ car.make }} {{ car.model }}">
+                            <div class="card-body">
+                                <div class="d-flex justify-content-between align-items-center mb-2">
+                                    <h5 class="card-title mb-0">{{ car.make }} {{ car.model }}</h5>
+                                    <span class="badge-year">{{ car.year }}</span>
+                                </div>
+                                <p class="card-text small mb-3">
+                                    {{ car.description|truncatechars:110 }}
+                                </p>
+                                <p class="fw-bold mb-0 text-primary">
+                                    ${{ car.price }}
+                                </p>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <p class="text-center text-muted mt-4">
+            No cars match your filters.
+        </p>
+    {% endif %}
+</div>
+{% endblock %}

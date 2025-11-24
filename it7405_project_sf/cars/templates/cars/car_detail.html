@@ -1,0 +1,132 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="car-detail-page">
+    <div class="container py-5">
+
+        <div class="car-detail-card mx-auto">
+            <div class="row g-4 p-4 align-items-center">
+
+                <!-- LEFT: Car Image -->
+                <div class="col-lg-6">
+                    <div class="car-image-wrapper">
+                        <img src="{{ car.image_url }}" class="img-fluid rounded shadow"
+                            alt="{{ car.make }} {{ car.model }}">
+                    </div>
+                </div>
+
+                <!-- RIGHT: Car Details -->
+                <div class="col-lg-6">
+                    <h2 class="fw-bold mb-1">{{ car.make }} {{ car.model }} ({{ car.year }})</h2>
+
+                    <!-- Price -->
+                    <div class="car-price mb-2">
+                        ${{ car.price }}
+                    </div>
+
+                    <!-- Short description -->
+                    <p class="car-description mb-3">
+                        {{ car.description }}
+                    </p>
+
+                    <!-- Key facts pills -->
+                    <div class="row g-2 mb-4 key-facts">
+                        <div class="col-6 col-md-4">
+                            <div class="fact-pill">
+                                <span class="fact-label">Year</span>
+                                <span class="fact-value">{{ car.year }}</span>
+                            </div>
+                        </div>
+                        <div class="col-6 col-md-4">
+                            <div class="fact-pill">
+                                <span class="fact-label">Make</span>
+                                <span class="fact-value">{{ car.make }}</span>
+                            </div>
+                        </div>
+                        <div class="col-6 col-md-4">
+                            <div class="fact-pill">
+                                <span class="fact-label">Model</span>
+                                <span class="fact-value">{{ car.model }}</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Action buttons -->
+                    <div class="d-flex flex-wrap gap-2 mt-2">
+                        <a href="{% url 'car_list' %}" class="btn btn-outline-secondary">
+                            Back to all cars
+                        </a>
+                        <a href="{% url 'buy_car' car.mongo_id %}" class="btn btn-primary">
+                            Buy this car
+                        </a>
+                        <a href="{% url 'make_offer' car.mongo_id %}" class="btn btn-outline-primary">
+                            Make an offer
+                        </a>
+                        <a href="{% url 'appointments' %}?car={{ car.mongo_id }}" class="btn btn-info text-white">
+                            Book a test drive
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <!-- Lower section: actions explanation only -->
+            <hr class="mt-0 mb-4">
+
+            <div class="row g-4 px-4 pb-4">
+                <div class="col-lg-12">
+                    <h5 class="mb-3">What you can do from this page</h5>
+
+                    <div class="detail-action-box mb-2">
+                        <h6 class="mb-1">Buy this car</h6>
+                        <p class="small mb-0 text-muted">
+                            Opens a purchase request form where the customer submits their contact details.
+                            
+                        </p>
+                    </div>
+
+                    <div class="detail-action-box mb-2">
+                        <h6 class="mb-1">Make an offer</h6>
+                        <p class="small mb-0 text-muted">
+                            Allows the customer to suggest their own price. Each offer is stored with status
+                            (pending / accepted / rejected).
+                        </p>
+                    </div>
+
+                    <div class="detail-action-box">
+                        <h6 class="mb-1">Book a test drive</h6>
+                        <p class="small mb-0 text-muted">
+                            Sends the user to the appointment page with this car pre-selected,
+                            so they can easily request a test-drive slot.
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+
+        </div>
+        <!-- Recommended Cars Section -->
+        <div class="recommended-cars mt-5">
+            <h3 class="text-center mb-4">Other Available Cars</h3>
+
+            <div class="row g-4 justify-content-center">
+                {% for other in other_cars %}
+                <div class="col-md-4 col-lg-3">
+                    <div class="recommended-car-card">
+                        <img src="{{ other.image_url }}" class="img-fluid rounded" alt="">
+                        <h6 class="mt-2 mb-1 text-center">{{ other.make }} {{ other.model }} ({{ other.year }})</h6>
+                        <p class="text-center small text-primary fw-bold mb-1">
+                            ${{ other.price }}
+                        </p>
+                        <div class="text-center">
+                            <a href="{% url 'car_detail' other.mongo_id %}" class="btn btn-outline-primary btn-sm mt-1">
+                                View details
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+
+    </div>
+</div>
+{% endblock %}

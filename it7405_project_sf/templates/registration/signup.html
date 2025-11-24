@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+
+{% block content %}
+<section class="page-section">
+  <div class="page-card-lg page-card-auth login-card">
+    <div class="page-card-header text-center">
+      <h2 class="page-card-title mb-1">Create your CarSales account</h2>
+      <p class="page-card-subtitle">
+        Sign up in a few steps to save your activity, submit reviews, and book test-drive appointments.
+      </p>
+    </div>
+
+    <form method="post" novalidate class="auth-form">
+      {% csrf_token %}
+      {% for field in form %}
+        <div class="mb-3">
+          <label class="form-label" for="{{ field.id_for_label }}">{{ field.label }}</label>
+          {{ field }}
+          {% if field.help_text %}
+            <div class="form-helper">{{ field.help_text|safe }}</div>
+          {% endif %}
+          {% if field.errors %}
+            <div class="text-danger small">
+              {{ field.errors|striptags }}
+            </div>
+          {% endif %}
+        </div>
+      {% endfor %}
+
+      <div class="d-flex align-items-center justify-content-between mt-3">
+        <button type="submit" class="btn btn-primary-gradient">
+          Sign up
+        </button>
+
+        <p class="form-helper mb-0">
+          Already registered?
+          <a href="{% url 'login' %}" class="auth-small-link">Log in instead</a>
+        </p>
+      </div>
+    </form>
+  </div>
+</section>
+{% endblock %}

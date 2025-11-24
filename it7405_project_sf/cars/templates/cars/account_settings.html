@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+
+{% block content %}
+<section class="page-section">
+  <div class="page-card-lg page-card-edit">
+    <div class="page-card-header">
+      <h2 class="page-card-title mb-1">Edit account details</h2>
+      <p class="page-card-subtitle">
+        Manage your profile information used for greetings, emails, and activity on CarSales.
+      </p>
+    </div>
+
+    <form method="post" novalidate>
+      {% csrf_token %}
+      {% for field in form %}
+      <div class="mb-3">
+        <label class="form-label" for="{{ field.id_for_label }}">{{ field.label }}</label>
+        {{ field }}
+        {% if field.errors %}
+        <div class="text-danger small">
+          {{ field.errors|striptags }}
+        </div>
+        {% endif %}
+      </div>
+      {% endfor %}
+
+      <div class="d-flex justify-content-between align-items-center mt-3">
+        <a href="{% url 'my_activity' %}" class="btn btn-outline-soft">
+          Back to My activity
+        </a>
+        <button type="submit" class="btn btn-primary-gradient">
+          Save account changes
+        </button>
+      </div>
+    </form>
+  </div>
+</section>
+{% endblock %}

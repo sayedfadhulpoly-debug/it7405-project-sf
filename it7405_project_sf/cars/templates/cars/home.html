@@ -1,0 +1,131 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<!-- HERO -->
+<section class="hero-section">
+    <div class="hero-overlay"></div>
+
+    <div class="container text-center">
+        <h1 class="hero-title mb-3">
+            Find your next car with confidence.
+        </h1>
+        <p class="hero-subtitle">
+            Browse trusted listings, compare prices, and discover detailed
+            information on each vehicle — all in one place.
+        </p>
+
+        <div class="hero-cta-group mt-3">
+            <a href="{% url 'car_list' %}" class="btn btn-primary btn-lg">
+                Browse Available Cars
+            </a>
+            {% if not user.is_authenticated %}
+            <a href="{% url 'signup' %}" class="btn btn-outline-light btn-lg">
+                Create an account
+            </a>
+            {% endif %}
+        </div>
+
+        <div class="mt-4 hero-links">
+            <a href="{% url 'reviews' %}" class="btn btn-link text-light">
+                Read customer reviews
+            </a>
+            <a href="{% url 'appointments' %}" class="btn btn-link text-light">
+                Book a test-drive appointment
+            </a>
+        </div>
+    </div>
+</section>
+
+<!-- FEATURE CARDS -->
+<section class="home-features py-5">
+    <div class="container">
+
+        <!-- Live stats row -->
+        <div class="row mb-4 text-center home-stats">
+            <div class="col-md-4 mb-2">
+                <span class="stat-number">{{ total_cars }}</span>
+                <span class="stat-label">Cars in our listings</span>
+            </div>
+            <div class="col-md-4 mb-2">
+                <span class="stat-number">{{ total_reviews }}</span>
+                <span class="stat-label">Customer reviews submitted</span>
+            </div>
+            <div class="col-md-4 mb-2">
+                <span class="stat-number">{{ total_appointments }}</span>
+                <span class="stat-label">Test-drive appointments requested</span>
+            </div>
+        </div>
+
+
+        <div class="row g-4">
+            <!-- Browse Cars card -->
+            <div class="col-md-4">
+                <div class="feature-card feature-card-browse h-100">
+                    <div class="feature-icon">
+                        <i class="bi bi-car-front-fill"></i>
+                    </div>
+                    <h3 class="feature-title">Browse Cars</h3>
+                    <p class="feature-text">
+                        View all available cars with prices and descriptions.
+                    </p>
+                    <a href="{% url 'car_list' %}" class="btn btn-outline-light w-100">
+                        Go to car listings
+                    </a>
+                </div>
+            </div>
+
+            <!-- Reviews card -->
+            <div class="col-md-4">
+                <div class="feature-card feature-card-reviews h-100">
+                    <div class="feature-icon feature-icon-green">
+                        <i class="bi bi-chat-square-heart"></i>
+                    </div>
+                    <h3 class="feature-title">Customer Reviews</h3>
+                    <p class="feature-text">
+                        Share feedback about the website and services.
+                    </p>
+                    <a href="{% url 'reviews' %}" class="btn btn-outline-light w-100">
+                        View reviews
+                    </a>
+                </div>
+            </div>
+
+            <!-- Appointments card -->
+            <div class="col-md-4">
+                <div class="feature-card feature-card-appointments h-100">
+                    <div class="feature-icon feature-icon-purple">
+                        <i class="bi bi-calendar-check"></i>
+                    </div>
+                    <h3 class="feature-title">Test-drive Appointments</h3>
+                    <p class="feature-text">
+                        Book a test-drive to any specific cars you like.
+                    </p>
+                    <a href="{% url 'appointments' %}" class="btn btn-outline-light w-100">
+                        Book an appointment
+                    </a>
+                </div>
+            </div>
+        </div>
+        <!-- My Activity card -->
+        <div class="col-md-6 mx-auto mt-4">
+            <div class="feature-card feature-card-activity h-100">
+                <div class="feature-icon feature-icon-gold">
+                    <i class="bi bi-person-check-fill"></i>
+                </div>
+
+                <h3 class="feature-title">My Activity</h3>
+                <p class="feature-text">
+                    View all your purchases, offers, reviews, and test-drive appointments in one place.
+                </p>
+
+                <a href="{% url 'my_activity' %}" class="btn btn-outline-light w-100">
+                    View my activity
+                </a>
+            </div>
+        </div>
+
+
+
+    </div>
+</section>
+{% endblock %}

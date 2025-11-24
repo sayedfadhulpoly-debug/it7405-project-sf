@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+
+{% block content %}
+<section class="page-section">
+  <div class="page-card-lg page-card-edit">
+    <div class="page-card-header">
+      <h2 class="page-card-title mb-1">Edit your review</h2>
+      <p class="page-card-subtitle">
+        Update your rating or comment. We appreciate your feedback and how it helps other customers.
+      </p>
+    </div>
+
+    <form method="post" novalidate>
+      {% csrf_token %}
+      {% for field in form %}
+      <div class="mb-3">
+        <label class="form-label" for="{{ field.id_for_label }}">{{ field.label }}</label>
+        {{ field }}
+        {% if field.help_text %}
+        <div class="form-helper">{{ field.help_text|safe }}</div>
+        {% endif %}
+        {% if field.errors %}
+        <div class="text-danger small">
+          {{ field.errors|striptags }}
+        </div>
+        {% endif %}
+      </div>
+      {% endfor %}
+
+      <div class="d-flex justify-content-between align-items-center mt-3">
+        <a href="{% url 'my_activity' %}" class="btn btn-outline-soft">
+          Cancel
+        </a>
+        <button type="submit" class="btn btn-primary-gradient">
+          Save changes
+        </button>
+      </div>
+    </form>
+  </div>
+</section>
+{% endblock %}

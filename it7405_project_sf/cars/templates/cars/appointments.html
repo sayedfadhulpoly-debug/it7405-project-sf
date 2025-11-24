@@ -1,0 +1,169 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container appointments-wrapper">
+    <div class="appointments-card">
+        <div class="row g-4 align-items-start">
+            <!-- LEFT: form -->
+            <div class="col-lg-6">
+                <h2 class="mb-2">Book a test-drive appointment</h2>
+                <p class="mb-4">
+                    Choose your preferred time and tell us which car you’re interested in.
+                    We’ll get back to you to confirm the exact schedule.
+                </p>
+
+                {% if submitted %}
+                <div class="appointment-success mb-3 p-3 d-flex gap-2">
+                    <span class="mt-1">
+                        ✅
+                    </span>
+                    <div>
+                        <strong>Your request has been received.</strong><br>
+                        We’ll contact you soon to confirm your test-drive appointment.
+                    </div>
+                </div>
+                {% endif %}
+
+                <div class="appointment-form-card">
+                    <form method="post">
+                        {% csrf_token %}
+
+                        <!-- Full name -->
+                        <div class="mb-3">
+                            <label class="form-label">Full name</label>
+                            {{ form.full_name }}
+                            {% if form.full_name.errors %}
+                            <div class="text-danger small">{{ form.full_name.errors|striptags }}</div>
+                            {% endif %}
+                        </div>
+
+                        <!-- Email -->
+                        <div class="mb-3">
+                            <label class="form-label">Email</label>
+                            {{ form.email }}
+                            {% if form.email.errors %}
+                            <div class="text-danger small">{{ form.email.errors|striptags }}</div>
+                            {% endif %}
+                        </div>
+
+                        <!-- Phone -->
+                        <div class="mb-3">
+                            <label class="form-label">Phone number</label>
+                            {{ form.phone }}
+                            {% if form.phone.errors %}
+                            <div class="text-danger small">{{ form.phone.errors|striptags }}</div>
+                            {% endif %}
+                        </div>
+
+                        <!-- Car interest -->
+                        <div class="mb-3">
+                            <label class="form-label">Car you want to test drive</label>
+                            {{ form.car_interest }}
+                            {% if form.car_interest.errors %}
+                            <div class="text-danger small">{{ form.car_interest.errors|striptags }}</div>
+                            {% endif %}
+                        </div>
+
+                        <div class="row">
+                            <!-- Date -->
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Preferred date</label>
+                                {{ form.preferred_date }}
+                                {% if form.preferred_date.errors %}
+                                <div class="text-danger small">{{ form.preferred_date.errors|striptags }}</div>
+                                {% endif %}
+                            </div>
+
+                            <!-- Time -->
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Preferred time of day</label>
+                                {{ form.preferred_time }}
+                                {% if form.preferred_time.errors %}
+                                <div class="text-danger small">{{ form.preferred_time.errors|striptags }}</div>
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        <!-- Message -->
+                        <div class="mb-3">
+                            <label class="form-label">Additional notes (optional)</label>
+                            {{ form.message }}
+                            {% if form.message.errors %}
+                            <div class="text-danger small">{{ form.message.errors|striptags }}</div>
+                            {% endif %}
+                        </div>
+
+                        <button type="submit" class="btn btn-primary w-100 mt-2">
+                            Submit appointment request
+                        </button>
+                    </form>
+                </div>
+            </div>
+
+            <!-- RIGHT: info / steps -->
+            <div class="col-lg-6 appointment-info">
+                <h5 class="mb-3">How test-drive appointments work?</h5>
+
+                <div class="appointment-step">
+                    <div class="appointment-step-icon">
+                        <i class="bi bi-envelope-check"></i>
+                    </div>
+                    <div>
+                        <div class="appointment-step-title">1. Submit your request</div>
+                        <div class="appointment-step-text">
+                            Fill in your contact details, the car you’re interested in, and your preferred date and
+                            time.
+                        </div>
+                    </div>
+                </div>
+
+                <div class="appointment-step">
+                    <div class="appointment-step-icon">
+                        <i class="bi bi-telephone-outbound"></i>
+                    </div>
+                    <div>
+                        <div class="appointment-step-title">2. We’ll contact you</div>
+                        <div class="appointment-step-text">
+                            Our team will review your request and contact you to confirm availability and finalize the
+                            booking.
+                        </div>
+                    </div>
+                </div>
+
+                <div class="appointment-step">
+                    <div class="appointment-step-icon">
+                        <i class="bi bi-car-front"></i>
+                    </div>
+                    <div>
+                        <div class="appointment-step-title">3. Visit and test drive</div>
+                        <div class="appointment-step-text">
+                            On the confirmed date, you’ll visit our showroom, check the car in detail, and take it for a
+                            test drive.
+                        </div>
+                    </div>
+                </div>
+
+                <div class="appointment-step">
+                    <div class="appointment-step-icon">
+                        <i class="bi bi-patch-check"></i>
+                    </div>
+                    <div>
+                        <div class="appointment-step-title">Tips before you arrive</div>
+                        <div class="appointment-step-text">
+                            Bring your valid driving license, arrive a few minutes early, and prepare any questions
+                            about financing or car history.
+                        </div>
+                    </div>
+                </div>
+
+                <p class="mt-3 mb-0 small appointment-helper-text">
+                    Need help choosing the right car? You can also browse our
+                    <a href="{% url 'car_list' %}" class="appointment-helper-link">available cars</a>
+                    before booking your appointment.
+                </p>
+
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
